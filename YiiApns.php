@@ -109,8 +109,12 @@ class YiiApns extends YiiApnsGcmBase
 
         $message = new ApnsPHP_Message($token);
         $message->setText($text);
-        foreach($args as $method => $value){
-            call_user_func_array(array($message,$method), $value);
+        foreach($args as $method => $value) {
+			if (strpos($message, 'set') === false) {
+				$method = 'set' . ucfirst($method);
+			}
+			$value = is_array($value) ? $value : array($value);
+            call_user_func_array(array($message, $method), $value);
         }
         // set a custom payload data
         foreach ($payloadData as $key => $value) {
@@ -149,8 +153,12 @@ class YiiApns extends YiiApnsGcmBase
             $message->addRecipient($token);
         }
         $message->setText($text);
-        foreach($args as $method => $value){
-            call_user_func_array(array($message,$method), $value);
+        foreach($args as $method => $value) {
+			if (strpos($message, 'set') === false) {
+				$method = 'set' . ucfirst($method);
+			}
+			$value = is_array($value) ? $value : array($value);
+            call_user_func_array(array($message, $method), $value);
         }
         // set a custom payload data
         foreach ($payloadData as $key => $value) {
