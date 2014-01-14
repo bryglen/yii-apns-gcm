@@ -12,7 +12,8 @@ abstract class YiiApnsGcmBase extends CApplicationComponent
     {
         $payloadData = http_build_query($payloadData);
         $args = http_build_query($args);
-        $msg = "Sending push notifications to " . is_array($tokens) ? implode(', ' , $tokens) : $tokens . "\n" .
+		$tokens = is_array($tokens) ? implode(', ' , $tokens) : $tokens;
+        $msg = "Sending push notifications to " . $tokens . "\n" .
             "message: {$text}\n" .
             "payload data: " . str_replace('&', ', ', $payloadData) . "\n" .
             "arguments: " . str_replace('&', ', ', $args);

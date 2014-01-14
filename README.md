@@ -1,5 +1,4 @@
-INSTALLATION
-------------
+### Installation
 
 in your **main.php** your configuration would look like this
 

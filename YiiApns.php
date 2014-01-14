@@ -1,15 +1,9 @@
 <?php
 define('AAPNS_LIB_PATH', dirname(__FILE__) . '/apns');
-require_once dirname(__FILE__ . '/AAPNSLog.php');
 require_once dirname(__FILE__) . '/YiiApnsGcmBase.php';
 
 /**
  * Class YiiApns
- *
- * @author Bryan Jayson Tan <bryantan16@gmail.com>
- * @link http://bryantan.info
- * @date 12/07/13
- * @time 9:41 PM
  *
  * @method YiiApns add(ApnsPHP_Message $message)
  * @method YiiApns getQueue($bEmpty = true)
@@ -38,7 +32,7 @@ class YiiApns extends YiiApnsGcmBase
      */
     public $options = array();
 
-    public $logger = 'AAPNSLog';
+    public $logger = 'YiiApnsLog';
 
     public function init()
     {
@@ -49,6 +43,7 @@ class YiiApns extends YiiApnsGcmBase
             throw new CException('Push SSL certificate is required.');
         }
         $this->initAutoloader();
+		require_once dirname(__FILE__) . '/YiiApnsLog.php';
         Yii::app()->attachEventHandler('onEndRequest', array($this, 'onApplicationEndRequest'));
         parent::init();
     }
@@ -65,14 +60,13 @@ class YiiApns extends YiiApnsGcmBase
             );
 
             $this->options['logger'] = new $this->logger;
+			if ($this->retryTimes) {
+				$this->options['sendRetryTimes'] = $this->retryTimes;
+			}
             foreach ($this->options as $key => $value) {
-                if ($this->retryTimes) {
-                    $method = 'setSendRetryTimes';
-                    $value = $this->retryTimes;
-                } else {
-                    $method = 'set' . ucfirst($key);
-                    $value = is_array($value) ? $value : array($value);
-                }
+				$method = 'set' . ucfirst($key);
+				$value = is_array($value) ? $value : array($value);
+
                 call_user_func_array(array($this->_client, $method), $value);
             }
             $this->_client->connect();
@@ -109,6 +103,7 @@ class YiiApns extends YiiApnsGcmBase
         // check if its dry run or not
         if ($this->dryRun === true) {
             $this->log($token, $text, $payloadData, $args = array());
+			$this->success = true;
             return null;
         }
 
@@ -212,11 +207,12 @@ class YiiApns extends YiiApnsGcmBase
 
         $filePath = sprintf('%s%s%s.php',
             AAPNS_LIB_PATH, DIRECTORY_SEPARATOR,
-            str_replace('_', DIRECTORY_SEPARATOR, $className)
+            str_replace('_', DIRECTORY_SEPARATOR, str_replace('ApnsPHP_', '', $className))
         );
 
-        if (!is_file($filePath) || !is_readable($filePath))
+        if (!is_file($filePath) || !is_readable($filePath)) {
             return; // let Yii handle this
+		}
 
         require_once($filePath);
     }

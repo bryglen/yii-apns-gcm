@@ -76,7 +76,7 @@ class YiiGCM extends YiiApnsGcmBase
         } catch (PHP_GCM\InvalidRequestException $e) {
             $this->errors[] = $e->getMessage();
             // server returned HTTP code other than 200 or 503
-        } catch (Exception $e) {
+        } catch (CException $e) {
             $this->errors[] = $e->getMessage();
             // message could not be sent
         }
@@ -116,6 +116,7 @@ class YiiGCM extends YiiApnsGcmBase
         // check if its dry run or not
         if ($this->dryRun === true) {
             $this->log($tokens, $text, $payloadData, $args);
+			$this->success = true;
             return null;
         }
 

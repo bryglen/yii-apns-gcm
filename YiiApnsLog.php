@@ -1,11 +1,6 @@
 <?php
-/**
- * @author Bryan Jayson Tan <admin@bryantan.info>
- * @link http://bryantan.info
- * @date 7/27/13
- * @time 3:43 PM
- */
-class AAPNSLog implements ApnsPHP_Log_Interface
+
+class YiiApnsLog implements ApnsPHP_Log_Interface
 {
     /**
      * Logs a message.
