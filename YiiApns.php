@@ -154,7 +154,7 @@ class YiiApns extends YiiApnsGcmBase
         }
         $message->setText($text);
         foreach($args as $method => $value) {
-			if (strpos($message, 'set') === false) {
+			if (strpos($method, 'set') === false) {
 				$method = 'set' . ucfirst($method);
 			}
 			$value = is_array($value) ? $value : array($value);
