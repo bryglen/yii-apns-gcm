@@ -92,23 +92,24 @@ class YiiApns extends YiiApnsGcmBase
      * );
      * </code>
      * @param string $token
-     * @param string $text a message in sending push notification
+     * @param array $messages a message in sending push notification
      * @param array $payloadData The payload contains information about how the system should alert the user as well as any custom data you provide
      * @param array $args optional additional information in sending a message
      * @return ApnsPHP_Message|null
      * @tutorial https://github.com/duccio/ApnsPHP
      */
-    public function send($token, $text, $payloadData = array(), $args = array())
+    public function send($token, $messages, $payloadData = array(), $args = array())
     {
         // check if its dry run or not
         if ($this->dryRun === true) {
-            $this->log($token, $text, $payloadData, $args = array());
+            $this->log($token, $messages['text'], $payloadData, $args = array());
 			$this->success = true;
             return null;
         }
 
         $message = new ApnsPHP_Message($token);
-        $message->setText($text);
+        $message->setText($messages['text']);
+        $message->setTitle($messages['title']);
         foreach($args as $method => $value) {
 			if (strpos($method, 'set') === false) {
 				$method = 'set' . ucfirst($method);

@@ -40,6 +40,7 @@ class ApnsPHP_Message
 
 	protected $_aDeviceTokens = array(); /**< @type array Recipients device tokens. */
 
+    protected $_sTitle; /**< @type string Alert title to display to the user. */
 	protected $_sText; /**< @type string Alert message to display to the user. */
 	protected $_nBadge; /**< @type integer Number to badge the application icon with. */
 	protected $_sSound; /**< @type string Sound to play. */
@@ -117,6 +118,16 @@ class ApnsPHP_Message
 	{
 		return $this->_aDeviceTokens;
 	}
+
+    /**
+     * Set the alert title to display to the user.
+     *
+     * @param  $sTitle @type string An alert title to display to the user.
+     */
+    public function setTitle($sTitle)
+    {
+        $this->_sTitle = $sTitle;
+    }
 
 	/**
 	 * Set the alert message to display to the user.
@@ -341,8 +352,11 @@ class ApnsPHP_Message
 	{
 		$aPayload[self::APPLE_RESERVED_NAMESPACE] = array();
 
+        if (isset($this->_sTitle)) {
+            $aPayload[self::APPLE_RESERVED_NAMESPACE]['alert']['title'] = (string)$this->_sTitle;
+        }
 		if (isset($this->_sText)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert']['body'] = (string)$this->_sText;
 		}
 		if (isset($this->_nBadge) && $this->_nBadge >= 0) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->_nBadge;
